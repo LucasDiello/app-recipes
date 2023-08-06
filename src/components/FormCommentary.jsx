@@ -1,19 +1,21 @@
 import React, { useState, useContext, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 
 import RecipesContext from '../context/RecipesContext';
 import useFetch from '../hooks/useFetch';
 import useComment from '../hooks/useComment';
 import Star from './Star';
-import './FormCommentary.css';
 import CountRatings from './CountRatings';
 import CommentBtn from './CommentBtn';
+import Comments from './Comments';
+import './FormCommentary.css';
 
 const FIVE = 5;
 const FOUR = 4;
 const THREE = 3;
 
-export default function FormCommentary() {
+export default function FormCommentary({ recipe }) {
   const { userLogged, comments, setComments } = useContext(RecipesContext);
   const { id } = useParams();
   const { fetchRecipeComments } = useFetch();
@@ -33,14 +35,13 @@ export default function FormCommentary() {
   const grades = [FIVE, FOUR, THREE, 2, 1];
 
   const handleSubmit = async () => {
-    setComment({ comment: '', rating: 0 });
-    await addComment(assessment);
+    setComment({ comment: '', rating: 0, photo: userLogged.photo });
+    await addComment(assessment, recipe);
   };
 
   const setAverage = () => {
     const sumRatings = comments.reduce((sum, { rating }) => rating + sum, 0);
-    console.log(sumRatings);
-    if (sumRatings) return sumRatings.toFixed(2);
+    if (sumRatings) return (sumRatings / comments.length).toFixed(2);
     return 'Not yet.';
   };
 
@@ -69,8 +70,7 @@ export default function FormCommentary() {
           </div>
           <div className="flex flex-col items-center gap-y-2">
             <textarea
-              className="resize-none block bg-transparent p-2.5 w-full text-sm text-white
-            rounded-lg border border-solid border-gray-300 outline-none"
+              className="textarea"
               maxLength="200"
               id="formComment"
               required
@@ -114,23 +114,14 @@ export default function FormCommentary() {
           </p>
         </div>
       </div>
-      <div className="self-start divide-y max-w-xs">
-        { comments
-    && comments.map(({ id: comId, userName, rating, comment }) => {
-      return (
-        <div key={ comId } className="flex flex-col mb-10">
-          <p className="mb-0 text-white">{userName}</p>
-          <div className="flex items-center">
-            <p className="mb-0 text-white">{`${rating},0  `}</p>
-            <p className="mb-0 text-[#ffa723] text-[20px]">
-              {Array.from({ length: rating }, () => star).join('')}
-            </p>
-          </div>
-          <p className="text-white break-words">{comment}</p>
-        </div>
-      );
-    })}
-      </div>
+      <Comments inRecipe />
     </div>
   );
 }
+
+FormCommentary.propTypes = {
+  recipe: PropTypes.shape({
+    recipeName: PropTypes.string,
+    recipeType: PropTypes.string,
+  }).isRequired,
+};

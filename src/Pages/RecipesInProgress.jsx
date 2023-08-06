@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { MdOutlineDelete } from 'react-icons/md';
 
 import { Link } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
 import useUser from '../hooks/useUser';
+import useFetch from '../hooks/useFetch';
 import Header from '../components/Header';
 import ShareBtn from '../components/ShareBtn';
-
-const typesBtn = ['Meals', 'Drinks'];
+import Filter from '../components/Filter';
 
 export default function RecipesInProgress() {
   const { validateCookie, handleRemoveInProgress } = useUser();
-  const { userLogged } = useContext(RecipesContext);
-  const [typeFilter, setTypeFilter] = useState('Meals');
+  const { sweetAlert } = useFetch();
+  const { userLogged, filter } = useContext(RecipesContext);
 
   useEffect(() => {
     (async () => {
@@ -20,85 +20,102 @@ export default function RecipesInProgress() {
     })();
   }, []);
 
-  const lowerType = typeFilter.toLowerCase();
+  const lowerType = filter.toLowerCase();
   const { inProgress } = userLogged || { inProgress: {} };
-  console.log(Object.keys(inProgress).length, lowerType);
+  const { meals, drinks } = inProgress || { meals: {}, drinks: {} };
+
+  const filteredFavorites = filter === 'all'
+    ? [...(meals ? Object.values(meals) : []), ...(drinks ? Object.values(drinks) : [])]
+      .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+    : Object.values(inProgress[`${lowerType}s`] || {}).reverse();
 
   return (
     <>
-      <Header
-        title="Recipes in Progress"
-        iconeSearch
-      />
-      <main className="recipe-box flex flex-col bg-form glass box-bottom min-h-screen">
-        <div>
-          { typesBtn.map((name) => (
-            <button
-              key={ name }
-              name="Meals"
-              type="button"
-              disabled={ typeFilter === name }
-              onClick={ () => setTypeFilter(name) }
-            >
-              {name}
-            </button>
-          ))}
-        </div>
-        { !Object.keys(inProgress).includes(lowerType) ? (
-          <div>
-            <p>{`No ${lowerType} in progress.`}</p>
+      <Header title="Recipes in Progress" />
+      <main className="recipe-box flex flex-col bg-form glass box-bottom">
+        <Filter />
+        { !filteredFavorites.length ? (
+          <div className="no-search">
+            <h2 className="text-[var(--yellow)] text-2xl">
+              {`There are no ${lowerType !== 'all'
+                ? `${lowerType}s` : 'recipes'} in progress.`}
+            </h2>
           </div>
         ) : (
-          <ul>
-            {Object.values(inProgress[lowerType]).reverse()
-              .map((recipe) => {
-                const { id, type, image, name,
-                  nationality, category, alcoholicOrNot, tags } = recipe;
-                return (
-                  <li key={ `${id}-${type}` }>
-                    <Link to={ `${type}s/${id}` }>
-                      <img
-                        style={ { width: '100px' } }
-                        src={ image }
-                        alt={ name }
-                      />
-                    </Link>
-                    <div>
-                      <div>
-                        <Link to={ `${type}s/${id}` }>
-                          <h3>{name}</h3>
+          <ul className="ready-recipe">
+            {filteredFavorites.map((recipe) => {
+              const { id, type, image, name, startDate,
+                nationality, category, alcoholicOrNot, tags } = recipe;
+              return (
+                <li
+                  className="border-grey p-0 container-ready"
+                  key={ `${id}-${type}` }
+                >
+                  <Link to={ `${type}s/${id}` }>
+                    <img
+                      className="detail-img"
+                      src={ image }
+                      alt={ name }
+                    />
+                  </Link>
+                  <div className="lg:p-3 p-[0.7rem] w-[100%]">
+                    <div className="flex justify-between w-full">
+                      <div className="flex gap-x-4 items-center">
+                        <Link
+                          className="no-underline title-done"
+                          to={ `${type}s/${id}` }
+                        >
+                          {name}
                         </Link>
                         <ShareBtn
                           type={ `/${type}s` }
                           id={ id }
                           testId={ `${id}-${type}-horizontal-share-btn` }
                         />
-                        <button
-                          type="button"
-                          className="reset-btn del-in-progress-btn"
-                          onClick={ () => handleRemoveInProgress(id, lowerType, recipe) }
+                      </div>
+                      <button
+                        type="button"
+                        className="reset-btn del-in-progress-btn"
+                        onClick={ () => sweetAlert(
+                          handleRemoveInProgress,
+                          id,
+                          lowerType,
+                          recipe,
+                        ) }
+                      >
+                        <MdOutlineDelete size="40px" />
+                      </button>
+                    </div>
+                    <p className="text-[var(--gray)] text-sm mb-1">
+                      { type === 'meal'
+                        ? `${nationality} - ${category}`
+                        : alcoholicOrNot }
+                    </p>
+                    <div className="justify-normal flex w-[100%]">
+                      <p className="text-[var(--darkYellow)] text-xs sm:text-sm mb-3">
+                        Start In:
+                        {' '}
+                        <span
+                          className="text-white"
                         >
-                          <MdOutlineDelete size="40px" />
-                        </button>
-                      </div>
-                      <div>
-                        <p>
-                          { type === 'meal'
-                            ? `${nationality} - ${category}`
-                            : alcoholicOrNot }
-                        </p>
-                      </div>
+                          { new Date(startDate).toLocaleDateString('en-US')}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="flex w-full gap-2 flex-wrap">
                       {tags.map((tag) => (
                         <div
+                          className="tag"
                           key={ tag }
                         >
                           {tag}
                         </div>
                       ))}
                     </div>
-                  </li>
-                );
-              })}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </main>

@@ -16,6 +16,7 @@ const headers = {
 
 const URL_USERS = `${process.env.REACT_APP_BASE_URL}/users`;
 const URL_COMMENTS = `${process.env.REACT_APP_BASE_URL}/comments`;
+const URL_RECIPES = `${process.env.REACT_APP_BASE_URL}/recipes`;
 
 export const fetchAPI = async (pathname, optSearch, textSearch) => {
   const BASE_URL = pathname === '/meals'
@@ -56,7 +57,6 @@ export const fetchNewUser = async (user) => {
       dones: [],
       favorites: [],
       inProgress: {},
-      my: [],
       score: 0,
       createAt: new Date().toISOString(),
     }),
@@ -89,5 +89,60 @@ export const fetchPostComment = async (comment) => {
     headers,
     method: 'POST',
     body: JSON.stringify(comment),
+  });
+};
+
+export const fetchDeleteComment = async (id, data) => {
+  await fetch(`${URL_COMMENTS}/${id}`, {
+    headers,
+    method: 'DELETE',
+  });
+  data.forEach(async (comment) => {
+    await fetch(URL_COMMENTS, {
+      headers,
+      method: 'POST',
+      body: JSON.stringify(comment),
+    });
+  });
+};
+
+export const fetchPatchComment = async (id, data) => {
+  await fetch(`${URL_COMMENTS}/${id}`, {
+    headers,
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+};
+
+export const fetchUsersRecipes = async ({ id = null, key = null, value = null }) => {
+  let response;
+  if (!id && !key) response = await fetch(URL_RECIPES);
+  response = id
+    ? await fetch(`${URL_RECIPES}/${id}`)
+    : await fetch(`${URL_RECIPES}?${key}=${value}`);
+  const data = await response.json();
+  return data;
+};
+
+export const fetchPostRecipe = async (recipe) => {
+  await fetch(URL_RECIPES, {
+    headers,
+    method: 'POST',
+    body: JSON.stringify({ ...recipe, strCreateAt: new Date().toISOString() }),
+  });
+};
+
+export const fetchDeleteRecipe = async (id) => {
+  await fetch(`${URL_RECIPES}/${id}`, {
+    headers,
+    method: 'DELETE',
+  });
+};
+
+export const fetchPatchRecipe = async (id, data) => {
+  await fetch(`${URL_RECIPES}/${id}`, {
+    headers,
+    method: 'PATCH',
+    body: JSON.stringify(data),
   });
 };

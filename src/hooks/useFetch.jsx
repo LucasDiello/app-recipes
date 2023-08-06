@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import Swal from 'sweetalert2';
 
 import { fetchAPI, fetchComments, fetchNewUser, fetchPatchUser,
   fetchUserEmail, fetchUserId } from '../services/fetchAPI';
@@ -16,6 +17,7 @@ const useFetch = () => {
       setLoading(true);
       return await fetchAPI(pathname, optSearch, textSearch);
     } catch ({ message }) {
+      console.error(message);
       setError(message);
       return [];
     } finally {
@@ -31,6 +33,28 @@ const useFetch = () => {
       color: 'var(--yellow)',
     });
   };
+
+  const sweetAlert = (fn, ...params) => Swal.fire({
+    title: 'Are you sure?',
+    text: 'You won\'t be able to revert this!',
+    icon: 'warning',
+    background: 'var(--darkGray)',
+    color: 'var(--yellow)',
+    showCancelButton: true,
+    buttonsStyling: false,
+    confirmButtonColor: 'var(--orange)',
+    cancelButtonColor: 'var(--darkYellow)',
+    confirmButtonText: 'Yes, delete it!',
+    customClass: {
+      confirmButton: 'swal-confirm',
+      cancelButton: 'swal-cancel',
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fn(...params);
+      fireToast('Deleted!', 'success');
+    }
+  });
 
   const initialFetch = async (pathname) => {
     const recipesData = await fetchRecipes(pathname);
@@ -105,6 +129,19 @@ const useFetch = () => {
     }
   };
 
+  const fetchCategories = async (pathname) => {
+    try {
+      setLoading(true);
+      const categoriesData = await fetchRecipes(pathname, 'categoriesList', 'list');
+      setCategories(categoriesData);
+    } catch ({ message }) {
+      setError(message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return { fetchRecipes,
     initialFetch,
     fireToast,
@@ -114,6 +151,8 @@ const useFetch = () => {
     checkUserExist,
     patchUser,
     fetchRecipeComments,
+    sweetAlert,
+    fetchCategories,
   };
 };
 

@@ -1,50 +1,38 @@
-import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import validator from 'validator';
+import { CgProfile } from 'react-icons/cg';
 
-import InitialLayout from './InitialLayout';
+import RecipesContext from '../context/RecipesContext';
+import useFetch from '../hooks/useFetch';
 import './FormCommentary.css';
 import '../Pages/Login.css';
-import useFetch from '../hooks/useFetch';
 
-export default function EditUserInfo({  }) {
-  const [user, setUser] = useState({
-    email: '',
-    name: '',
-    password: '',
-  });
-  const [emailRegister, setEmailRegister] = useState(false);
-  const { postNewUser, checkUserExist } = useFetch();
-  const history = useHistory();
+export default function EditUserInfo({ setEmailRegister }) {
+  const { userLogged, setUserLogged } = useContext(RecipesContext);
+  const { checkUserExist } = useFetch();
 
-  const NAME_LENGTH = 3;
-
-  const handleChange = ({ name, value }) => {
-    setUser({ ...user, [name]: value });
-  };
-
-  const handleSubmit = async () => {
-    history.push('/profile');
-  };
-
+  const { name, email, score, photo } = userLogged
+  || { name: '', email: '', score: 0, photo: '' };
   const focus = 'peer-focus:-top-5 peer-focus:text-xs';
   const valid = 'peer-valid:-top-5 peer-valid:text-xs';
   const classLabel = `label ${focus} ${valid}`;
-  const classBtnMain = 'reset-input btn-login';
-  const classBtbHover = 'enabled:hover:text-[#F9EFBB] shadow-hover';
-  const classBtnDisabled = 'disabled:cursor-not-allowed disabled:text-[#CF5927]';
-  const classBtn = `${classBtnMain} ${classBtbHover} ${classBtnDisabled}`;
 
-  const checkEmail = async (email) => {
-    const emailExist = await checkUserExist(email);
-    setEmailRegister(emailExist);
+  const handleChange = ({ name: nameInput, value }) => {
+    setUserLogged({ ...userLogged, [nameInput]: value });
+  };
+
+  const checkEmail = async (value) => {
+    if (value !== email && validator.isEmail(value)) {
+      const emailExist = await checkUserExist(value);
+      setEmailRegister(emailExist);
+    }
   };
 
   return (
-    <InitialLayout>
+    <div className="editUser-container">
       <form
-        className="flex-center flex-col gap-7 w-full max-w-sm"
+        className="flex-center flex-col gap-7 w-full max-w-[216px]"
         onSubmit={ (event) => {
           event.preventDefault();
           handleSubmit();
@@ -56,7 +44,7 @@ export default function EditUserInfo({  }) {
             id="email"
             type="email"
             name="email"
-            value={ user.email }
+            value={ email }
             data-testid="email-input"
             onChange={ ({ target }) => handleChange(target) }
             onBlur={ ({ target }) => checkEmail(target.value) }
@@ -75,7 +63,7 @@ export default function EditUserInfo({  }) {
             id="name"
             type="text"
             name="name"
-            value={ user.name }
+            value={ name }
             data-testid="name-input"
             onChange={ ({ target }) => handleChange(target) }
             required
@@ -86,24 +74,45 @@ export default function EditUserInfo({  }) {
           >
             Name
           </label>
-        </div>
-        <div className="space-x-5">
-          <button
-            id="button"
-            type="submit"
-            disabled={ !(
-              validator.isEmail(user.email)
-            ) }
-          >
-            Save Changes
-          </button>
-          <button
-            id="button"
-          >
-            Cancel
-          </button>
+          <p className="my-2 text-white text-xl">
+            {`Score: ${score}`}
+          </p>
         </div>
       </form>
-    </InitialLayout>
+      <div className="flex flex-col items-center gap-3 w-full max-w-[216px]">
+        { photo && validator.isURL(photo) ? (
+          <img
+            src={ photo }
+            alt="user"
+            className="rounded-[100px] w-[150px] h-[150px]  border-div"
+          />
+        ) : (
+          <CgProfile
+            className="rounded-[100px] w-[150px] h-[150px] bg-[var(--yellow)]"
+          />
+        )}
+        <div className="user-box">
+          <input
+            className="peer reset-input input"
+            name="photo"
+            value={ photo }
+            type="url"
+            onChange={ ({ target }) => {
+              handleChange(target);
+            } }
+          />
+          <label
+            className={ `label ${focus} ${photo.length ? valid : ''}` }
+            htmlFor="confirmPass"
+          >
+            Photo
+          </label>
+        </div>
+      </div>
+    </div>
   );
 }
+
+EditUserInfo.propTypes = {
+  setEmailRegister: PropTypes.func.isRequired,
+};
