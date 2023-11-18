@@ -8,7 +8,7 @@ import { MdOutlineEditNote } from 'react-icons/md';
 import { LuChefHat } from 'react-icons/lu';
 import { FaRankingStar } from 'react-icons/fa6';
 import { AiOutlineTeam } from 'react-icons/ai';
-
+import { BiWorld } from 'react-icons/bi';
 import RecipesContext from '../context/RecipesContext';
 import useUser from '../hooks/useUser';
 
@@ -55,6 +55,16 @@ export default function Menu({ showClose = false }) {
           >
             <HiOutlineHome className="border-2 border-solid rounded-[100%]" />
             Home
+          </Link>
+        </li>
+        <li>
+          <Link
+            className="option-menu"
+            to="/meals/users"
+            onClick={ () => setMenuOpen(false) }
+          >
+            <BiWorld className="border-2 border-solid rounded-[100%]" />
+            Users Recipes
           </Link>
         </li>
         <li>
@@ -120,7 +130,7 @@ export default function Menu({ showClose = false }) {
         <li>
           <Link
             className="option-menu"
-            onClick={ logout }
+            onClick={ () => setMenuOpen(false) }
             to="/about"
           >
             <AiOutlineTeam className="border-2 border-solid rounded-[100%]" />

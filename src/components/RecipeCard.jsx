@@ -8,7 +8,8 @@ export default function RecipeCard() {
   const { pathname } = useLocation();
   const { recipes } = useContext(RecipesContext);
 
-  const KEY_BASE = pathname === '/meals' ? 'Meal' : 'Drink';
+  const KEY_BASE = pathname.includes('/meals') ? 'Meal' : 'Drink';
+  const id = pathname.includes('/users') ? 'id' : `id${KEY_BASE}`;
 
   return recipes.map((item, index) => (
     <Link
@@ -16,10 +17,10 @@ export default function RecipeCard() {
       className="relative card"
       type="button"
       data-testid={ `${index}-recipe-card` }
-      to={ `${pathname}/${item[`id${KEY_BASE}`]}` }
+      to={ `${pathname}/${item[id]}` }
     >
       <img
-        className="rounded-md w-full border-0"
+        className="rounded-md w-full h-full border-0"
         src={ item[`str${KEY_BASE}Thumb`] }
         alt={ item[`str${KEY_BASE}`] }
         data-testid={ `${index}-card-img` }

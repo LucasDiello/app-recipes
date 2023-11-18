@@ -34,7 +34,7 @@
   }
 
   .title-done {
-    @apply text-[var(--yellow)] text-2xl font-bold
+    @apply text-[var(--yellow)] text-2xl font-bold mb-0
   }
 
   .tam-img {
@@ -71,10 +71,10 @@
     @apply border-div border-gray-300 border-[0.1px] p-3
   }
   .btn-recipe {
-    @apply w-[60%] max-w-[1000px] rounded-md text-white text-sm border-none bg-[#6e7909] py-3 font-bold uppercase tracking-widest
+    @apply fixed bottom-0 w-[100%] max-w-[1000px] rounded-md text-white text-sm border-none bg-[#6e7909] py-3 font-bold uppercase tracking-widest
   }
   .btn-container {
-    @apply fixed bottom-0 z-50 flex items-center justify-center w-[100%]
+    @apply  z-50 flex items-center justify-center w-[100%]
   }
 
   .iframe-youtube {
@@ -109,6 +109,10 @@
 
   .bg-form {
     @apply bg-[rgba(0,0,0,.6)] border border-white border-opacity-10
+  }
+
+  .bg-notFounded {
+    @apply bg-[rgba(255,255,255,.2)] border border-white border-opacity-10
   }
 
   .user-box {
@@ -278,6 +282,13 @@
     @apply flex flex-col w-full sm:w-[55%] min-h-[318.3px] mt-3 h-fit
   }
 
+  .file-btn {
+    @apply py-3 px-2 bg-[var(--orange)] text-white rounded-lg uppercase text-center my-2 cursor-pointer w-full font-bold
+  }
+
+  .select-file {
+    @apply bg-[var(--green)]
+  }
 }
 
 * {
