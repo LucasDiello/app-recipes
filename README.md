@@ -2,7 +2,7 @@
 # APP Recipes - App de Receitas
 ---
 
-#### Sobre o projeto
+### Sobre o projeto
 
 
 - O Receitas Plus foi concebido para simplificar sua experiência na cozinha, proporcionando uma plataforma intuitiva e abrangente para todas as suas necessidades culinárias. O projeto começou com a ideia simples de tornar a culinária mais acessível e inspiradora para os amantes da comida. No entanto, à medida que avançamos no desenvolvimento, percebemos que poderíamos criar algo muito mais significativo.
