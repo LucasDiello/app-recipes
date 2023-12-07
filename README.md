@@ -47,4 +47,5 @@ Obrigado por escolher o App Recipes. Esperamos que aproveite a jornada culinári
 - [@kauancarniel](https://github.com/kauancarniel) 📄
 
 
-Bon appétit!
+# Bon appétit!
+## Link para acesso: https://recipe-app-g6.vercel.app/
