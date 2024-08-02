@@ -5,9 +5,8 @@
 ### Sobre o projeto
 
 
-- O App Recipes foi concebido para simplificar sua experiência na cozinha, proporcionando uma plataforma intuitiva e abrangente para todas as suas necessidades culinárias. O projeto começou com a ideia simples de tornar a culinária mais acessível e inspiradora para os amantes da comida. No entanto, à medida que avançamos no desenvolvimento, percebemos que poderíamos criar algo muito mais significativo.
+- O App Recipes foi concebido por 1 grupo de desenvolvedores para simplificar a experiência na cozinha. No entanto, à medida que avançamos no desenvolvimento, percebemos que poderíamos criar algo muito mais significativo.
 O que começou como uma ideia única evoluiu para uma comunidade dinâmica e interativa. Nosso objetivo não era apenas fornecer receitas e dicas, mas também criar um espaço onde todos pudessem participar ativamente, compartilhar suas próprias receitas, aprender e crescer juntos. Em resumo, o App Recipes não é apenas uma coleção de instruções culinárias; é uma janela para apreciadores da gastronomia, uma escola de técnicas e um ponto de encontro para amantes da comida.
-
 
 
 #### Principais Funcionalidades
